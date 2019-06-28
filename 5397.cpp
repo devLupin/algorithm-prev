@@ -1,14 +1,18 @@
-#include<vector>
 #include<iostream>
 #include<string>
+#include <list>
+#include <vector>
 using namespace std;
-int main(void) 
+int main(void)
 {
 	vector<string> v;
 
+	list<char> s;
+	list<char> d;
+
 	int N;
 	cin >> N;
-	
+
 	v.reserve(N);
 	for (int i = 0; i < N; i++) {
 		string str;
@@ -17,65 +21,49 @@ int main(void)
 	}
 
 	for (int i = 0; i < N; i++) {
-		int cursor = 0;
 		int traveler = 0;
-		string result = "";
 		while (traveler < v[i].size()) {
-			char temp = v[i].at(traveler);
-			
-			switch (temp) {
+			switch (v[i].at(traveler)) {
 			case '<':
-				if (cursor == 0) {
+				if (s.empty() || traveler == 0) {
 					traveler++;
 					break;
 				}
+				d.push_back(s.back());
+				s.pop_back();
 				traveler++;
-				cursor--;
 				break;
 			case '>':
-				if (cursor >= result.size()) {
+				if (d.empty() || traveler > v[i].size() - 1) {
 					traveler++;
 					break;
 				}
+				s.push_back(d.back());
+				d.pop_back();
 				traveler++;
-				cursor++;
 				break;
 			case '-':
-				if (!result.empty()) {
-					string front = result.substr(0, cursor - 1);
-					string end = result.substr(cursor);
-
-					result = front;
-					result.append(end);
-					
+				if (s.empty() || traveler == 0) {
 					traveler++;
-					cursor--;
-					
 					break;
 				}
+				s.pop_back();
 				traveler++;
 				break;
 			default:
-				string addChar(1, temp);
-			
-				if (cursor == 0 || cursor == result.size()) {
-					result.append(addChar);
-					cursor++;
-					traveler++;
-					break;
-				}
-				string front = result.substr(0, cursor);
-				string end = result.substr(cursor);
-
-				result = front;
-				result.append(addChar);
-				result.append(end);
-
-				cursor++;
+				s.push_back(v[i].at(traveler));
 				traveler++;
 			}
 		}
-		cout << result << endl;
+		while (!d.empty()) {
+			s.push_back(d.back());
+			d.pop_back();
+		}
+		while (!s.empty()) {
+			cout << s.front();
+			s.pop_front();
+		}
+		cout << endl;
 	}
 
 	return 0;
