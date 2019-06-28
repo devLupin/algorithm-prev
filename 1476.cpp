@@ -4,7 +4,6 @@ int main(void)
 {
 	int year = 1;
 	int E, S, M;
-	int tempE = 1, tempS = 1, tempM = 1;
 	cin >> E >> S >> M;
 
 	while (true) {
