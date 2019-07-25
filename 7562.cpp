@@ -1,57 +1,60 @@
-#include<queue>
-#include<vector>
 #include<iostream>
+#include<queue>
 #include<cstring>
 using namespace std;
-int main(void)
-{	
-	int pos[][2] = { {-1, +2}, {-2, +1}, {-2, -1}, {-1, -2},
-					{+1, -2}, {+2, -1}, {+2, +1}, {+1, +2} };
 
-	int n; int* result = NULL;
-	cin >> n;
+const int dy[8] = { -1,-2,-2,-1,1,2,1,2 };
+const int dx[8] = { -2,-1,1,2,-2,-1,2,1 };
 
-	result = new int[n];
-	for (int i = 0; i < n; i++) {
-		queue<pair<int, int>> q;
-		pair<int, int> src, dest;
-		int sz, x, y;
+int map[300][300] = { 0, };
+bool visited[300][300] = { false, };
+int sz = 0;
 
-		int visited[301][301] = { 0, };
+int dfs(int sx, int sy, int ex, int ey) {
+	queue<pair<pair<int, int>, int>> q;
+	q.push(make_pair(make_pair(sy, sx), 0));
 
-		cin >> sz;
-		cin >> x >> y;
-		src = make_pair(x, y);
-		cin >> x >> y;
-		dest = make_pair(x, y);
+	int ans = 0;
 
-		q.push(src);
-		while (!q.empty()) {
-			pair<int, int> current = q.front();
-			q.pop();
+	while (!q.empty()) {
+		pair<int, int> cur = q.front().first;
+		int cur_cost = q.front().second;
+		visited[cur.first][cur.second] = true;
+		q.pop();
 
-			if (current.second == dest.first && current.first == dest.second) {
-				result[i] = visited[current.second][current.first];
-				break;
-			}
+		if (cur.first == ey && cur.second == ex)
+			ans = cur_cost;
 
-			for (int j = 0; j < 8; j++) {
-				int dy = current.first + pos[j][1];
-				int dx = current.second + pos[j][0];
+		for (int dir = 0; dir < 8; dir++) {
+			int ny = cur.first + dy[dir];
+			int nx = cur.second + dx[dir];
 
-				if (dx < 0 || dy < 0 || dx >= sz || dy >= sz)
-					continue;
-				if (visited[dy][dx])
-					continue;
+			if (ny < 0 || nx < 0 || ny >= sz || nx >= sz)
+				continue;
+			if (visited[ny][nx])
+				continue;
 
-				q.push(make_pair(dy, dx));
-				visited[dy][dx] = visited[current.second][current.first] + 1;
-			}
+			q.push(make_pair(make_pair(ny, nx), cur_cost + 1));
+			visited[ny][nx] = true;
 		}
 	}
+	while (!q.empty())
+		q.pop();
+	return ans;
+}
 
-	for (int i = 0; i < n; i++)
-		cout << result[i] << endl;
-	
+int main(void)
+{
+	int tc; cin >> tc;
+	for (int i = 0; i < tc; i++) {
+		memset(map, 0, sizeof(map));
+		memset(visited, false, sizeof(visited));
+
+		cin >> sz;
+
+		int sx, sy, ex, ey;
+		cin >> sx >> sy >> ex >> ey;
+		cout << dfs(sx, sy, ex, ey) << endl;
+	}
 	return 0;
 }
