@@ -5,10 +5,10 @@ using namespace std;
 
 int N, M;
 vector<int> graph[10001];
-vector<int> visited; //¹æ¹® À¯¹«
-vector<int> hacking; //°¢°¢ÀÇ ÄÄÇ»ÅÍ ¹øÈ£¸¶´Ù ÇØÅ·ÇÒ ¼ö ÀÖ´Â ÄÄÇ»ÅÍ °³¼ö
+vector<int> visited; //ë°©ë¬¸ ìœ ë¬´
+vector<int> hacking; //ê°ê°ì˜ ì»´í“¨í„° ë²ˆí˜¸ë§ˆë‹¤ í•´í‚¹í•  ìˆ˜ ìˆëŠ” ì»´í“¨í„° ê°œìˆ˜
 
-int ans = 0; //°¡Àå ¸¹ÀÌ ÇØÅ·ÇÒ ¼ö ÀÖ´Â ÄÄÇ»ÅÍ °³¼ö
+int ans = 0; //ê°€ì¥ ë§ì´ í•´í‚¹í•  ìˆ˜ ìˆëŠ” ì»´í“¨í„° ê°œìˆ˜
 
 void dfs(int node) {
 
@@ -24,7 +24,7 @@ void dfs(int node) {
 		}
 	}
 }
-int main() {
+int main(void) {
 
 	scanf("%d %d", &N, &M);
 
@@ -37,7 +37,7 @@ int main() {
 	hacking = vector<int>(N + 1, 0);
 
 	for (int i = 1; i <= N; i++) {
-		visited = vector<int>(N + 1, 0); //¹æ¹® ÃÊ±âÈ­
+		visited = vector<int>(N + 1, 0); //ë°©ë¬¸ ì´ˆê¸°í™”
 
 		visited[i]++;
 		dfs(i);
