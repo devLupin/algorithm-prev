@@ -3,66 +3,65 @@
 #include <cstring>
 using namespace std;
 
-typedef struct {
-	int y, x;
-}pos;
+const int dy[] = { -1,1,0,0 }, dx[] = { 0,0,-1,1 };
+int n, m, map[100][100] = { 0, }, last_cheese = 0, time = 0;
+bool visited[100][100] = { false, };
+typedef pair<int, int> pii;
 
-int n, m;
+int check()
+{
+	int ret = 0;
 
-const int dy[] = { -1,1,0,0 };
-const int dx[] = { 0,0,-1,1 };
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			if (map[i][j] != 0)
+				ret++;
 
-int map[101][101];
-bool visited[101][101];
-
-int lastRemain = 0;
-int time = 0;
+	return ret;
+}
 
 void bfs()
 {
-	queue<pos> del;
+	memset(visited, false, sizeof(visited));
 
-	queue<pos> q;
+	queue<pii> q;
+	q.push({ 0,0 });
+	visited[0][0] = true;
 
-	while (true) {
-		memset(visited, false, sizeof(visited));
-		q.push({ 1,1 });
+	while (!q.empty())
+	{
+		pii cur = q.front();
+		q.pop();
 
-		while (!q.empty()) {
-			pos cur = q.front();
-			q.pop();
+		for (int dir = 0; dir < 4; dir++) {
+			int ny = cur.first + dy[dir];
+			int nx = cur.second + dx[dir];
 
-			for (int dir = 0; dir < 4; dir++) {
-				int ny = cur.y + dy[dir];
-				int nx = cur.x + dx[dir];
-
-				if (ny < 0 || nx < 0 || ny >= n || nx >= m)
-					continue;
-				if (visited[ny][nx])
-					continue;
-
-				if (map[ny][nx] == 1) {
-					del.push({ ny,nx });
-					visited[ny][nx] = true;
-					continue;
-				}
-
+			if (ny < 0 || nx < 0 || ny > n || nx > m)
+				continue;
+			if (visited[ny][nx])
+				continue;
+			if (map[ny][nx] > 0) {
+				visited[ny][nx] = true;
+				map[ny][nx] = map[ny][nx] - 1;
+			}
+			else {
 				q.push({ ny,nx });
 				visited[ny][nx] = true;
 			}
 		}
-		if (del.size() == 0)
-			break;
+	}
+}
 
-		lastRemain = del.size();
+void solve()
+{
+	while (true) {
+		int numOfCheese = check();
 
-		while (!del.empty()) {
-			pos cur = del.front();
-			del.pop();
+		if (numOfCheese <= 0) break;
 
-			map[cur.y][cur.x] = 0;
-		}
-
+		last_cheese = numOfCheese;
+		bfs();
 		time++;
 	}
 }
@@ -71,12 +70,12 @@ int main(void)
 {
 	ios::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
-
 	cin >> n >> m;
-	for (int y = 0; y < n; y++)
-		for (int x = 0; x < m; x++)
-			cin >> map[y][x];
 
-	bfs();
-	cout << time << '\n' << lastRemain;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			cin >> map[i][j];
+
+	solve();
+	cout << time << '\n' << last_cheese;
 }

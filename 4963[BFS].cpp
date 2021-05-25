@@ -1,79 +1,79 @@
-#include <queue>
 #include <iostream>
+#include <queue>
 #include <cstring>
+#include <vector>
 using namespace std;
 
-typedef struct {
-	int y, x;
-}pos;
+int w, h;
+int map[50][50] = { 0, };
+bool visited[50][50];
 
-int map[51][51];
-bool visited[51][51];
-int n = 1, m = 1;
+const int dy[] = { -1,1,0,0,1,1,-1,-1 };
+const int dx[] = { 0,0,-1,1,1,-1,1,-1 };
 
-const int dy[] = { -1,1,0,0,-1,1,-1,1 };
-const int dx[] = { 0,0,-1,1,-1,-1,1,1 };
+typedef pair<int, int> pii;
+vector<pii> land;
 
-queue<pos> temp;
-
-int bfs() 
+int bfs()
 {
+	queue<pii> q;
 	int ret = 0;
-	queue<pos> q;
-	
-	while (!temp.empty()) {
-		pos t = temp.front();
-		temp.pop();
 
-		if (visited[t.y][t.x])
+	for (auto it = land.begin(); it != land.end(); it++) {
+		pii cur = (*it);
+
+		if (visited[cur.first][cur.second])
 			continue;
 
-		q.push({ t.y,t.x });
-		visited[t.y][t.x] = true;
-
+		q.push(cur);
+		visited[cur.first][cur.second] = true;
+		
 		while (!q.empty()) {
-			pos cur = q.front();
+			pii cur = q.front();
 			q.pop();
 
 			for (int dir = 0; dir < 8; dir++) {
-				int ny = cur.y + dy[dir];
-				int nx = cur.x + dx[dir];
+				int ny = cur.first + dy[dir];
+				int nx = cur.second + dx[dir];
 
-				if (ny < 0 || nx < 0 || ny >= n || nx >= m)
+				if (ny < 0 || nx < 0 || ny >= h || nx >= w)
 					continue;
-				if (visited[ny][nx])
+				if (visited[ny][nx] || map[ny][nx] == 0)
 					continue;
-				if (map[ny][nx] == 1) {
-					visited[ny][nx] = true;
-					q.push({ ny,nx });
-				}
+
+				q.push({ ny, nx });
+				visited[ny][nx] = true;
 			}
 		}
+
 		ret++;
 	}
 	return ret;
 }
 
-int main(void)
+int main(void) 
 {
 	ios::sync_with_stdio(0);
 	cin.tie(0); cout.tie(0);
 
 	while (true) {
-		cin >> m >> n;
-		if (n == 0 && m == 0)
+		memset(visited, false, sizeof(visited));
+		memset(map, 0, sizeof(map));
+
+		cin >> w >> h;
+
+		if (w == 0 && h == 0)
 			break;
 
-		memset(visited, false, sizeof(visited));
-
-		for (int y = 0; y < n; y++) {
-			for (int x = 0; x < m; x++) {
+		for (int y = 0; y < h; y++)
+			for (int x = 0; x < w; x++) {
 				cin >> map[y][x];
+				
 				if (map[y][x] == 1)
-					temp.push({ y,x });
+					land.push_back({ y,x });
 			}
-		}
-
 		cout << bfs() << '\n';
+		while (!land.empty()) land.pop_back();
 	}
+	return 0;
 }

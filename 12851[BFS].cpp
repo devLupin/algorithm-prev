@@ -1,49 +1,43 @@
 #include <iostream>
 #include <queue>
-#include <vector>
-#include <algorithm>
 using namespace std;
 
 const int sz = 100001;
-
-int n, k;
-
-typedef pair<int, int> pi;
-vector<int> v;
-
+int n, k, map[sz] = { 0, };
 bool visited[sz] = { false, };
-void bfs()
-{
-	queue<pi> q;
-	q.push({ 0,n });
 
-	int min_time = -1;
+typedef struct {
+	int x, sec;
+}pos;
+
+int sec = 0, cnt = 0;
+void bfs(int src, int dest)
+{
+	queue<pos> q;
+
+	q.push({ src,0 });
+	visited[src] = true;
 
 	while (!q.empty()) {
-		pi cur = q.front();
-		int time = cur.first;
-		int node = cur.second;
+		pos cur = q.front();
 		q.pop();
-		visited[node] = true;
+		visited[cur.x] = true;	// 큐에서 pop할 때 방문표시가 핵심임.
 
-		if (min_time >= 0 && node == k && min_time == time) {
-			v.push_back(time);
-		}
-
-		if (min_time == -1 && node == k) {
-			min_time = time;
-			v.push_back(time);
+		if (sec && sec == cur.sec && cur.x == dest)
+			cnt++;
+		if (!sec && cur.x == dest) {
+			sec = cur.sec;
+			cnt++;
 		}
 
-		if (node + 1 < sz && !visited[node + 1]) {
-			q.push({ time + 1, node + 1 });
-		}
-		if (node - 1 >= 0 && !visited[node - 1]) {
-			q.push({ time + 1, node - 1 });
-		}
-		if (node * 2 < sz && !visited[node * 2]) {
-			q.push({ time + 1, node * 2 });
-		}
+		if (cur.x - 1 >= 0 && !visited[cur.x - 1])
+			q.push({ cur.x - 1, cur.sec + 1 });
+
+		if (cur.x + 1 < sz && !visited[cur.x + 1])
+			q.push({ cur.x + 1, cur.sec + 1 });
+
+		if (cur.x * 2 < sz && !visited[cur.x * 2])
+			q.push({ cur.x * 2,cur.sec + 1 });
 	}
 }
 
@@ -53,10 +47,6 @@ int main(void)
 	cin.tie(0); cout.tie(0);
 
 	cin >> n >> k;
-	
-	bfs();
-	sort(v.begin(), v.end());
-
-	cout << v[0] << '\n' << v.size();
-	return 0;
+	bfs(n, k);
+	cout << sec << '\n' << cnt << '\n';
 }
